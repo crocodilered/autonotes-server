@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('AUTONOTES_SECRET_KEY', 'kekeke-lol')
 
-DEBUG = True
+DEBUG = os.getenv('AUTONOTES_DEBUG', False)
 
 ALLOWED_HOSTS = ['*']
 
