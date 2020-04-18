@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework import generics, views
 from rest_framework.response import Response
 from .serializers import UserCurrentSerializer, UserRegisterSerializer
+from rest_framework.permissions import AllowAny
 
 
 User = get_user_model()
@@ -11,6 +12,7 @@ User = get_user_model()
 class UserCreateView(generics.CreateAPIView):
     model = User
     serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny]
 
 
 class UserCurrentView(generics.RetrieveAPIView):
