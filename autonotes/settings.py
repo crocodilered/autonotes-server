@@ -144,5 +144,7 @@ USE_TZ = True
 DATETIME_FORMAT = '%Y-%m-%d'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.getenv('AUTONOTES_STATIC_ROOT', '/static/')
+
 MEDIA_URL = os.getenv('AUTONOTES_MEDIA_URL', '/media/')
 MEDIA_ROOT = os.getenv('AUTONOTES_MEDIA_ROOT', '/media/')
