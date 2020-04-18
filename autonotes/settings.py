@@ -130,7 +130,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'users.serializers.User
 
 LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC+3'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = False
 
