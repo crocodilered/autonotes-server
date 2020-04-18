@@ -1,6 +1,5 @@
 import os
 
-from django.db.models import Count
 from rest_framework import generics, viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,32 +10,24 @@ from .serializers import (
     VehicleSerializer
 )
 from .models import Maker, Vehicle
+from .permissions import OwnerPerm
 
 
 class MakerListView(generics.ListAPIView):
-    # TODO: make in available for authed users only
     queryset = Maker.objects.all()
     serializer_class = MakerShortSerializer
 
 
 class MakerRetrieveView(generics.RetrieveAPIView):
-    # TODO: make in available for authed users only
     queryset = Maker.objects.all()
     serializer_class = MakerRetrieveSerializer
 
 
 class VehicleViewSet(viewsets.ModelViewSet):
+    queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-
-        if not user.is_authenticated:
-            return Vehicle.objects.none()
-
-        return Vehicle.objects\
-            .filter(user=user)\
-            .annotate(notes_count=Count('notes'))
+    permission_classes = [OwnerPerm]
+    allowed_methods = ['PUT', 'PATCH', 'DELETE']
 
     def destroy(self, request, *args, **kwargs):
         vehicle = self.get_object()

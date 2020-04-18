@@ -1,4 +1,6 @@
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 from rest_framework import generics, viewsets, views
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,26 +10,28 @@ from .serializers import (
     NoteSerializer, NoteListSerializer,
 )
 
+from autonotes.vehicles.models import Vehicle
 from .models import Kind, Note
 
 
 class KindListView(generics.ListAPIView):
-    # TODO: make in available for authenticated users only
     queryset = Kind.objects.all()
     serializer_class = KindSerializer
 
 
 class NoteAggregationView(views.APIView):
     """ Show aggregated notes list, filtered by vehicle. """
-    # TODO: implement permissions
-    # permission_classes =
 
     def get(self, request, **kwargs):
         try:
-            vehicle_id = int(kwargs.get('vehicle_pk'))
+            vehicle = get_object_or_404(Vehicle, id=kwargs.get('vehicle_pk'))
+
+            # Security action
+            if vehicle.user != request.user:
+                raise PermissionDenied
 
             notes = Note.objects\
-                .filter(vehicle__id=vehicle_id)\
+                .filter(vehicle=vehicle)\
                 .values('kind')\
                 .order_by('kind')\
                 .annotate(Sum('cost'))
@@ -39,9 +43,9 @@ class NoteAggregationView(views.APIView):
 
 
 class NoteViewSet(viewsets.ModelViewSet):
-    # TODO: implement permissions
     # TODO: clean attachments on update / delete
-    queryset = Note.objects.all()
+    def get_queryset(self):
+        return Note.objects.filter(vehicle__user=self.request.user)
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -54,8 +58,9 @@ class NoteViewSet(viewsets.ModelViewSet):
             vehicle_id = int(request.query_params.get('vehicle'))
             kind_id = int(request.query_params.get('kind'))
 
-            queryset = Note.objects.filter(vehicle__id=vehicle_id, kind__id=kind_id)
+            queryset = self.get_queryset().filter(vehicle__id=vehicle_id, kind__id=kind_id)
             serializer = self.get_serializer(queryset, many=True)
+
             return Response(serializer.data)
 
         except TypeError:
