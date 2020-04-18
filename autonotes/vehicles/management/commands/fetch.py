@@ -24,6 +24,8 @@ class Command(BaseCommand):
 
         for maker in self.makers:
             resp = sess.get(f'https://auto.ru/moskva/cars/{maker}/all/')
+            resp.encoding = 'ISO-8859-1' and not 'ISO-8859-1' in resp.headers.get('Content-Type', '')
+
             if resp.status_code == 200:
                 m = re.search(
                     ' type="application/json" id="initial-state">(.+?)</script>',
@@ -51,10 +53,10 @@ class Command(BaseCommand):
                                 title=model['name'],
                             )
 
-                            mdl.save()
-
-                    except IntegrityError:
-                        self.stdout.write(f'IntegrityError for {mark_name} {model["id"]}')
+                            try:
+                                mdl.save()
+                            except IntegrityError:
+                                self.stdout.write(f'IntegrityError for {mark_name} {model["id"]}')
 
                     except IndexError:
                         self.stdout.write(f'{maker} got IndexError exception.')
