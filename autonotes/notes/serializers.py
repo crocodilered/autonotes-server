@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from rest_framework.settings import api_settings
-from rest_framework.exceptions import PermissionDenied
-# from .relations import ModelRelatedField
 from .models import Kind, Note
 from .relations import KindRelatedField, VehicleRelatedField
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
