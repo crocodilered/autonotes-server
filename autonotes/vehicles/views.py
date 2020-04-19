@@ -27,7 +27,7 @@ class VehicleViewSet(viewsets.ModelViewSet):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [OwnerPerm]
-    http_method_names = ['PUT', 'PATCH', 'DELETE', 'POST']
+    http_method_names = ['put', 'patch', 'delete', 'post']
 
     def destroy(self, request, *args, **kwargs):
         vehicle = self.get_object()
