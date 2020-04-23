@@ -90,7 +90,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(
         # minutes=int(os.environ['AUTONOTES_ACCESS_TOKEN_LIFETIME_MINUTES'])
-        minutes=1000
+        minutes=60*24*30  # 30 days
     ),
 
     'REFRESH_TOKEN_LIFETIME': timedelta(
